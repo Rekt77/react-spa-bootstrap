@@ -124,7 +124,7 @@ module.exports = function(webpackEnv) {
       : isEnvDevelopment && 'cheap-module-source-map',
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
-    entry: [
+    entry: {
       // Include an alternative client for WebpackDevServer. A client's job is to
       // connect to WebpackDevServer by a socket and get notified about changes.
       // When you save a file, the client will either apply hot updates (in case
@@ -135,14 +135,24 @@ module.exports = function(webpackEnv) {
       // the line below with these two lines if you prefer the stock client:
       // require.resolve('webpack-dev-server/client') + '?/',
       // require.resolve('webpack/hot/dev-server'),
-      isEnvDevelopment &&
+      app:[
+        isEnvDevelopment &&
         require.resolve('react-dev-utils/webpackHotDevClient'),
+        paths.appIndexJs,
+      ],
+      vendor:[
+        isEnvDevelopment &&
+        require.resolve('raf/polyfill'),
+        'react',
+        'react-dom',
+        'react-router-dom',
+      ]
       // Finally, this is your app's code:
-      paths.appIndexJs,
+      
       // We include the app code last so that if there is a runtime error during
       // initialization, it doesn't blow up the WebpackDevServer client, and
       // changing JS code would still trigger a refresh.
-    ].filter(Boolean),
+    },
     output: {
       // The build folder.
       path: isEnvProduction ? paths.appBuild : undefined,
@@ -469,6 +479,12 @@ module.exports = function(webpackEnv) {
       ],
     },
     plugins: [
+
+      new webpack.optimize.SplitChunksPlugin({
+        name:'vendor',
+        filename:'vendor.js'
+      }),
+
       // Generates an `index.html` file with the <script> injected.
       new HtmlWebpackPlugin(
         Object.assign(

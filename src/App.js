@@ -5,7 +5,7 @@ import {
     Home,
     About,
     Posts
-} from 'pages';
+} from 'pages/index.async.js';
 
 const App = () => {
     return(
@@ -15,7 +15,7 @@ const App = () => {
         <Route path="/about/:name?" component={About} />
         <Route path="/posts" component={Posts} />
       </div>
-    )
+    );
 }
 
 export default App;
